@@ -8,7 +8,7 @@ import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/settings/providers/settings_provider.dart';
-import 'l10n/generated/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'services/admob/admob_service.dart';
 import 'services/analytics/analytics_service.dart';
 import 'services/database/database_service.dart';
@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: AppLocalizations.delegate.supportedLocales,
+            supportedLocales: AppLocalizations.supportedLocales,
             locale: settingsProvider.locale,
             onGenerateRoute: AppRouter.onGenerateRoute,
             initialRoute: AppRouter.initialRoute,
