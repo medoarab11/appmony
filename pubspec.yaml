@@ -1,0 +1,82 @@
+name: appmony
+description: A full-featured personal finance app with multilingual and multicurrency support.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # State Management
+  provider: ^6.0.5
+  flutter_bloc: ^8.1.3
+  
+  # Database
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  
+  # Firebase
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
+  cloud_firestore: ^4.9.1
+  firebase_analytics: ^10.4.5
+  
+  # Monetization
+  google_mobile_ads: ^3.0.0
+  in_app_purchase: ^3.1.10
+  
+  # UI
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.7
+  intl: ^0.18.1
+  fl_chart: ^0.63.0
+  shimmer: ^3.0.0
+  lottie: ^2.6.0
+  
+  # Utils
+  shared_preferences: ^2.2.1
+  connectivity_plus: ^4.0.2
+  uuid: ^3.0.7
+  equatable: ^2.0.5
+  logger: ^1.4.0
+  url_launcher: ^6.1.14
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.3
+  build_runner: ^2.4.6
+  mockito: ^5.4.2
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.2
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
+    
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+flutter_intl:
+  enabled: true
+  class_name: AppLocalizations
+  main_locale: en
+  arb_dir: lib/l10n
+  output_dir: lib/l10n/generated
