@@ -292,7 +292,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 
                 return ListTile(
                   title: Text(language.name),
-                  subtitle: Text(language.localName),
+                  subtitle: Text(language.nativeName),
                   trailing: isSelected
                       ? const Icon(
                           Icons.check_circle,

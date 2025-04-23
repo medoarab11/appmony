@@ -12,6 +12,8 @@ import '../../../services/admob/admob_service.dart';
 import '../../../services/database/database_service.dart';
 import '../../../services/subscription/subscription_service.dart';
 import '../../settings/providers/settings_provider.dart';
+import '../../transactions/screens/transactions_screen.dart';
+import '../../budgets/screens/budgets_screen.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/budget_summary.dart';
 import '../widgets/recent_transactions.dart';
@@ -179,7 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // TODO: Show all wallets
+                              Navigator.of(context).pushNamed(AppRouter.wallets);
                             },
                             child: const Text('See All'),
                           ),
@@ -301,9 +303,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       
                       // Premium upgrade card
-                      if (budgets.length >= AppConstants.maxBudgetsInFreeTier &&
-                          !Provider.of<SubscriptionService>(context).isPremium)
-                        _buildPremiumCard(),
+                      FutureBuilder<List<BudgetModel>>(
+                        future: Provider.of<DatabaseService>(context).getBudgets(),
+                        builder: (context, budgetsSnapshot) {
+                          final budgets = budgetsSnapshot.data ?? [];
+                          if (budgets.length >= AppConstants.maxBudgetsInFreeTier &&
+                              !Provider.of<SubscriptionService>(context).isPremium) {
+                            return _buildPremiumCard();
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -316,17 +326,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
   
   Widget _buildTransactionsTab() {
-    // TODO: Implement transactions tab
-    return const Center(
-      child: Text('Transactions Tab'),
-    );
+    return const TransactionsScreen();
   }
   
   Widget _buildBudgetsTab() {
-    // TODO: Implement budgets tab
-    return const Center(
-      child: Text('Budgets Tab'),
-    );
+    return const BudgetsScreen();
   }
   
   Widget _buildReportsTab() {

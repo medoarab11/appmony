@@ -39,7 +39,7 @@ class WalletList extends StatelessWidget {
                 wallet: wallet,
                 onTap: () {
                   Navigator.of(context).pushNamed(
-                    AppRouter.walletDetails,
+                    AppRouter.walletDetail,
                     arguments: wallet,
                   );
                   
