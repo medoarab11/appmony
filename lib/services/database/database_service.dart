@@ -56,8 +56,13 @@ class DatabaseService {
       CREATE TABLE Wallet (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
-        balance REAL NOT NULL,
-        currencyCode TEXT NOT NULL,
+        type TEXT NOT NULL,
+        initialBalance REAL NOT NULL DEFAULT 0,
+        balance REAL NOT NULL DEFAULT 0,
+        totalIncome REAL NOT NULL DEFAULT 0,
+        totalExpense REAL NOT NULL DEFAULT 0,
+        description TEXT,
+        currencyCode TEXT,
         color INTEGER,
         icon TEXT,
         isArchived INTEGER DEFAULT 0,
@@ -234,6 +239,15 @@ class DatabaseService {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+  
+  Future<void> createWallet(WalletModel wallet) async {
+    final db = await database;
+    await db.insert(
+      'Wallet',
+      wallet.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
   Future<void> updateWallet(WalletModel wallet) async {
     final db = await database;
@@ -244,11 +258,32 @@ class DatabaseService {
       whereArgs: [wallet.id],
     );
   }
-
+  
   Future<void> deleteWallet(String id) async {
     final db = await database;
+    
+    // Start a transaction
+    await db.transaction((txn) async {
+      // Delete all transactions associated with this wallet
+      await txn.delete(
+        'Transaction',
+        where: 'walletId = ?',
+        whereArgs: [id],
+      );
+      
+      // Delete the wallet
+      await txn.delete(
+        'Wallet',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    });
+  }
+
+  Future<void> deleteCategory(String id) async {
+    final db = await database;
     await db.delete(
-      'Wallet',
+      'Category',
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -469,29 +504,95 @@ class DatabaseService {
       type: type,
     );
   }
+  
+  Future<List<TransactionModel>> getFilteredTransactions({
+    String? walletId,
+    String? categoryId,
+    String? type,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? searchQuery,
+    int? limit,
+  }) async {
+    final db = await database;
+    
+    String whereClause = '';
+    List<dynamic> whereArgs = [];
+    
+    if (walletId != null) {
+      whereClause += whereClause.isEmpty ? 'walletId = ?' : ' AND walletId = ?';
+      whereArgs.add(walletId);
+    }
+    
+    if (categoryId != null) {
+      whereClause += whereClause.isEmpty ? 'categoryId = ?' : ' AND categoryId = ?';
+      whereArgs.add(categoryId);
+    }
+    
+    if (type != null) {
+      whereClause += whereClause.isEmpty ? 'type = ?' : ' AND type = ?';
+      whereArgs.add(type);
+    }
+    
+    if (startDate != null) {
+      whereClause += whereClause.isEmpty ? 'date >= ?' : ' AND date >= ?';
+      whereArgs.add(startDate.millisecondsSinceEpoch);
+    }
+    
+    if (endDate != null) {
+      whereClause += whereClause.isEmpty ? 'date <= ?' : ' AND date <= ?';
+      whereArgs.add(endDate.millisecondsSinceEpoch);
+    }
+    
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      whereClause += whereClause.isEmpty ? 'description LIKE ?' : ' AND description LIKE ?';
+      whereArgs.add('%$searchQuery%');
+    }
+    
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Transaction',
+      where: whereClause.isEmpty ? null : whereClause,
+      whereArgs: whereArgs.isEmpty ? null : whereArgs,
+      orderBy: 'date DESC',
+      limit: limit,
+    );
+    
+    return List.generate(maps.length, (i) {
+      return TransactionModel.fromMap(maps[i]);
+    });
+  }
 
   Future<void> _updateWalletBalance(String walletId) async {
     final db = await database;
+    
+    // Get wallet to get initial balance
+    final wallet = await getWallet(walletId);
+    if (wallet == null) return;
     
     // Calculate total income
     final incomeResult = await db.rawQuery(
       'SELECT SUM(amount) as total FROM Transaction WHERE walletId = ? AND type = ?',
       [walletId, 'income'],
     );
-    final double income = incomeResult.first['total'] as double? ?? 0.0;
+    final double totalIncome = incomeResult.first['total'] as double? ?? 0.0;
     
     // Calculate total expense
     final expenseResult = await db.rawQuery(
       'SELECT SUM(amount) as total FROM Transaction WHERE walletId = ? AND type = ?',
       [walletId, 'expense'],
     );
-    final double expense = expenseResult.first['total'] as double? ?? 0.0;
+    final double totalExpense = expenseResult.first['total'] as double? ?? 0.0;
     
     // Update wallet balance
-    final balance = income - expense;
+    final balance = wallet.initialBalance + totalIncome - totalExpense;
     await db.update(
       'Wallet',
-      {'balance': balance, 'updatedAt': DateTime.now().millisecondsSinceEpoch},
+      {
+        'balance': balance, 
+        'totalIncome': totalIncome,
+        'totalExpense': totalExpense,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch
+      },
       where: 'id = ?',
       whereArgs: [walletId],
     );

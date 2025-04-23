@@ -73,7 +73,7 @@ class BalanceCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    wallet.type,
+                    _getWalletTypeText(wallet.type),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white.withOpacity(0.8),
                     ),
@@ -93,7 +93,7 @@ class BalanceCard extends StatelessWidget {
         return Icons.money;
       case 'bank':
         return Icons.account_balance;
-      case 'credit card':
+      case 'credit_card':
         return Icons.credit_card;
       case 'savings':
         return Icons.savings;
@@ -101,6 +101,23 @@ class BalanceCard extends StatelessWidget {
         return Icons.trending_up;
       default:
         return Icons.account_balance_wallet;
+    }
+  }
+  
+  String _getWalletTypeText(String type) {
+    switch (type.toLowerCase()) {
+      case 'cash':
+        return 'Cash';
+      case 'bank':
+        return 'Bank Account';
+      case 'credit_card':
+        return 'Credit Card';
+      case 'savings':
+        return 'Savings Account';
+      case 'investment':
+        return 'Investment Account';
+      default:
+        return 'Wallet';
     }
   }
 }

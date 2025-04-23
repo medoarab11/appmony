@@ -49,7 +49,7 @@ class BudgetSummary extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Navigator.of(context).pushNamed(
-                AppRouter.budgetDetails,
+                AppRouter.budgetDetail,
                 arguments: budget,
               );
             },

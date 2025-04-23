@@ -174,6 +174,64 @@ class AnalyticsService {
     }
   }
   
+  // Log wallet created event
+  Future<void> logWalletCreated({
+    required String walletType,
+    required double initialBalance,
+  }) async {
+    if (!_isInitialized) return;
+    
+    try {
+      await _analytics?.logEvent(
+        name: 'wallet_created',
+        parameters: {
+          'wallet_type': walletType,
+          'initial_balance': initialBalance,
+        },
+      );
+    } catch (e) {
+      print('Error logging wallet created: $e');
+    }
+  }
+  
+  // Log wallet updated event
+  Future<void> logWalletUpdated({
+    required String walletType,
+    required double balance,
+  }) async {
+    if (!_isInitialized) return;
+    
+    try {
+      await _analytics?.logEvent(
+        name: 'wallet_updated',
+        parameters: {
+          'wallet_type': walletType,
+          'balance': balance,
+        },
+      );
+    } catch (e) {
+      print('Error logging wallet updated: $e');
+    }
+  }
+  
+  // Log wallet deleted event
+  Future<void> logWalletDeleted({
+    required String walletType,
+  }) async {
+    if (!_isInitialized) return;
+    
+    try {
+      await _analytics?.logEvent(
+        name: 'wallet_deleted',
+        parameters: {
+          'wallet_type': walletType,
+        },
+      );
+    } catch (e) {
+      print('Error logging wallet deleted: $e');
+    }
+  }
+  
   // Set user properties
   Future<void> setUserProperties({
     required String userId,

@@ -50,13 +50,13 @@ class SubscriptionCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          subscription.name,
+                          subscription.title,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (subscription.isMostPopular)
+                        if (subscription.isPopular)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -83,11 +83,11 @@ class SubscriptionCard extends StatelessWidget {
                         color: Colors.grey,
                       ),
                     ),
-                    if (subscription.savingsPercentage > 0)
+                    if (subscription.discountPercentage != null && subscription.discountPercentage! > 0)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          'Save ${subscription.savingsPercentage}%',
+                          'Save ${subscription.discountPercentage!.toStringAsFixed(0)}%',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
@@ -103,13 +103,15 @@ class SubscriptionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    subscription.formattedPrice,
+                    '${subscription.currencyCode} ${subscription.price.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    subscription.billingPeriod,
+                    subscription.period == 'monthly' ? 'per month' : 
+                    subscription.period == 'yearly' ? 'per year' : 
+                    subscription.period == 'trial' ? 'free trial' : '',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey,
                     ),

@@ -48,7 +48,7 @@ class RecentTransactions extends StatelessWidget {
         return ListTile(
           onTap: () {
             Navigator.of(context).pushNamed(
-              AppRouter.transactionDetails,
+              AppRouter.transactionDetail,
               arguments: transaction,
             );
           },

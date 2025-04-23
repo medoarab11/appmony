@@ -14,6 +14,10 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/transactions/screens/create_transaction_screen.dart';
 import '../../features/transactions/screens/transaction_detail_screen.dart';
 import '../../features/transactions/screens/transactions_screen.dart';
+import '../../features/wallets/screens/create_wallet_screen.dart';
+import '../../features/wallets/screens/wallet_details_screen.dart';
+import '../../features/wallets/screens/wallets_screen.dart';
+import '../../models/wallet/wallet_model.dart';
 
 class AppRouter {
   // Route Names
@@ -31,6 +35,9 @@ class AppRouter {
   static const String languageSettings = '/settings/language';
   static const String currencySettings = '/settings/currency';
   static const String premium = '/premium';
+  static const String wallets = '/wallets';
+  static const String createWallet = '/wallets/create';
+  static const String walletDetail = '/wallets/detail';
   
   // Initial Route
   static String get initialRoute => splash;
@@ -97,6 +104,21 @@ class AppRouter {
       
       case premium:
         return MaterialPageRoute(builder: (_) => const PremiumScreen());
+      
+      case wallets:
+        return MaterialPageRoute(builder: (_) => const WalletsScreen());
+      
+      case createWallet:
+        final WalletModel? wallet = settings.arguments as WalletModel?;
+        return MaterialPageRoute(
+          builder: (_) => CreateWalletScreen(wallet: wallet),
+        );
+      
+      case walletDetail:
+        final WalletModel wallet = settings.arguments as WalletModel;
+        return MaterialPageRoute(
+          builder: (_) => WalletDetailsScreen(wallet: wallet),
+        );
       
       default:
         return MaterialPageRoute(
