@@ -58,7 +58,7 @@ GoogleService-Info.plist
 *.g.dart
 *.freezed.dart
 *.mocks.dart
-lib/l10n/generated/
+# lib/l10n/generated/ # We need these files for localization
 
 # Coverage reports
 coverage/
